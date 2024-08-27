@@ -1,0 +1,242 @@
+package oasis;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import javax.swing.Timer;
+
+public class Main {
+    public static void main(String[] args) {
+        new LoginFrame();
+    }
+}
+
+class LoginFrame extends JFrame {
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JButton loginButton;
+    private HashMap<String, String> users;
+
+    public LoginFrame() {
+        setTitle("Login");
+        setSize(300, 150);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Sample users (username -> password)
+        users = new HashMap<>();
+        users.put("user1", "pass1");
+        users.put("user2", "pass2");
+
+        // GUI Components
+        usernameField = new JTextField(15);
+        passwordField = new JPasswordField(15);
+        loginButton = new JButton("Login");
+
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Username:"));
+        panel.add(usernameField);
+        panel.add(new JLabel("Password:"));
+        panel.add(passwordField);
+        panel.add(loginButton);
+
+        add(panel);
+
+        // Login Action
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = usernameField.getText();
+                String password = new String(passwordField.getPassword());
+
+                if (users.containsKey(username) && users.get(username).equals(password)) {
+                    // Successful login
+                    JOptionPane.showMessageDialog(null, "Login Successful!");
+                    dispose();
+                    new MainFrame(username); // Open main window
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid credentials!");
+                }
+            }
+        });
+
+        setVisible(true);
+    }
+}
+
+class MainFrame extends JFrame {
+    private String username;
+    private JButton profileButton, quizButton, logoutButton;
+
+    public MainFrame(String username) {
+        this.username = username;
+        setTitle("Main Menu");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        profileButton = new JButton("Update Profile");
+        quizButton = new JButton("Start Quiz");
+        logoutButton = new JButton("Logout");
+
+        JPanel panel = new JPanel();
+        panel.add(profileButton);
+        panel.add(quizButton);
+        panel.add(logoutButton);
+
+        add(panel);
+
+        // Profile Update 
+        profileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new ProfileFrame(username);
+            }
+        });
+
+        // Start Quiz 
+        quizButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new QuizFrame(username);
+            }
+        });
+
+        // Logout 
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                new LoginFrame();
+            }
+        });
+
+        setVisible(true);
+    }
+}
+
+class ProfileFrame extends JFrame {
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JButton updateButton;
+
+    public ProfileFrame(String username) {
+        setTitle("Update Profile");
+        setSize(300, 200);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        usernameField = new JTextField(username, 15);
+        passwordField = new JPasswordField(15);
+        updateButton = new JButton("Update");
+
+        JPanel panel = new JPanel();
+        panel.add(new JLabel("Username:"));
+        panel.add(usernameField);
+        panel.add(new JLabel("New Password:"));
+        panel.add(passwordField);
+        panel.add(updateButton);
+
+        add(panel);
+
+        updateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               
+                JOptionPane.showMessageDialog(null, "Profile Updated!");
+            }
+        });
+
+        setVisible(true);
+    }
+}
+
+class QuizFrame extends JFrame {
+    private JLabel questionLabel1,questionLabel2, timerLabel;
+    private JRadioButton o1Q1, o2Q1, o3Q1, o4Q1;
+    private JRadioButton o1Q2,o2Q2,o3Q2,o4Q2;
+    private ButtonGroup optionsGroup1,optionsGroup2;
+    private JButton submitButton;
+    private Timer timer;
+    private int timeRemaining = 60; 
+
+    public QuizFrame(String username) {
+        setTitle("Quiz");
+        setSize(400, 200);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        questionLabel1 = new JLabel("Q1: What is 4*3+12 ?");
+        o1Q1 = new JRadioButton("60");
+        o2Q1 = new JRadioButton("24");
+        o3Q1 = new JRadioButton("0");
+        o4Q1 = new JRadioButton("26");
+        optionsGroup1 = new ButtonGroup();
+        optionsGroup1.add(o1Q1);
+        optionsGroup1.add(o2Q1);
+        optionsGroup1.add(o3Q1);
+        optionsGroup1.add(o4Q1);
+
+        questionLabel2 = new JLabel("Q2: Fastest land animal?");
+        o1Q2 = new JRadioButton("tiger");
+        o2Q2 = new JRadioButton("lion");
+        o3Q2 = new JRadioButton("leopard");
+        o4Q2 = new JRadioButton("cheetah");
+        optionsGroup2 = new ButtonGroup();
+        optionsGroup2.add(o1Q2);
+        optionsGroup2.add(o2Q2);
+        optionsGroup2.add(o3Q2);
+        optionsGroup2.add(o4Q2);
+
+        submitButton = new JButton("Submit");
+        timerLabel = new JLabel("Time left: " + timeRemaining + "s");
+
+        JPanel panel = new JPanel();
+        panel.add(questionLabel1);
+        panel.add(o1Q1);
+        panel.add(o2Q1);
+        panel.add(o3Q1);
+        panel.add(o4Q1);
+        panel.add(questionLabel2);
+        panel.add(o1Q2);
+        panel.add(o2Q2);
+        panel.add(o3Q2);
+        panel.add(o4Q2);
+        panel.add(submitButton);
+        panel.add(timerLabel);
+
+        add(panel);
+
+        // Timer Action
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timeRemaining--;
+                timerLabel.setText("Time left: " + timeRemaining + "s");
+                if (timeRemaining <= 0) {
+                    timer.stop();
+                    submitQuiz();
+                }
+            }
+        });
+        timer.start();
+
+        // Submit Action
+        submitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                submitQuiz();
+            }
+        });
+
+        setVisible(true);
+    }
+
+    private void submitQuiz() {
+        timer.stop();
+       
+        JOptionPane.showMessageDialog(null, "Quiz Submitted!");
+        dispose();
+    }
+}
